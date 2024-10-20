@@ -1,0 +1,31 @@
+steps:
+  # Portage to build your image
+  - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
+    env:
+     - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
+    args: [
+      'run', 'all', '--tag', '${_IMAGE_NAME}'
+    ]
+
+  # Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_NAME}']
+
+  # Deploy the application to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', 'doe-demo-ui',
+      '--image', '${_IMAGE_NAME}',
+      '--region', 'us-west1',
+      '--platform', 'managed',
+      '--allow-unauthenticated'
+    ]
+
+# Define the variables used in the build
+substitutions:
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-doe-demo/doe-demo-container-registry/doe-demo-ui"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
