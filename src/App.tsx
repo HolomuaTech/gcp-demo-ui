@@ -73,7 +73,7 @@ const Navbar = () => (
 export const App = () => (
   <ChakraProvider theme={theme}>
     <Navbar />
-    <Box textAlign="center" fontSize="xl" border="1px solid black">
+    <Box textAlign="center" fontSize="xl" >
       <Grid minH="100vh" p={3}>
         <ColorModeSwitcher justifySelf="flex-end" />
         <VStack spacing={4} mt={-20}>
@@ -90,7 +90,7 @@ const NameForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const res = await fetch("http://localhost:8000/submit", {
+    const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app:8000/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
