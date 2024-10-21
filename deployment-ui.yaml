@@ -1,0 +1,35 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-k8s-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world-k8s-ui
+  template:
+    metadata:
+      labels:
+        app: hello-world-k8s-ui
+    spec:
+      containers:
+      - name: hello-world-k8s-ui
+        image: supermongol/hello-world-k8s-ui
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+
+# CREATE DEPLOYMENT: 
+#   kubectl apply -f deployment-ui.yaml
+# UPDATE K8s IMAGE: 
+#   kubectl set image deployment/hello-world-k8s-ui hello-world-k8s-ui=supermongol/hello-world-k8s-ui:latest
+# DELETE EXISTING PODS: 
+#   kubectl delete pods -l app=hello-world-k8s-ui
+# DELETE DEPLOYMENT: 
+#   kubectl delete deployment hello-world-k8s-ui
+# DELETE SERVICE: 
+#   kubectl delete service hello-world-k8s-ui
+# DELETE ALL: 
+#   kubectl delete deployment hello-world-k8s-ui && kubectl delete service hello-world-k8s-ui
+
