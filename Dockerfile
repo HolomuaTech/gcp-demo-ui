@@ -11,12 +11,10 @@ RUN npm run build
 # Stage 2 - the production environment
 FROM nginx:1.17.9-alpine
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
 
-# Build: 
-#   docker build -t supermongol/hello-world-k8s-ui .
-# Push: 
-#   docker push supermongol/hello-world-k8s-ui
-# Run local: 
-#   docker run -p 80:80 supermongol/hello-world-k8s-ui
+# Add the custom Nginx config to make it listen on port 8080
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 8080 instead of 80
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]
