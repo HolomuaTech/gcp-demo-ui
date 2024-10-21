@@ -1,6 +1,6 @@
 steps:
   # Portage to build your image
-  - name: 'ghcr.io/easy-up/portage:latest'
+  - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
     env:
      - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
     args: [
