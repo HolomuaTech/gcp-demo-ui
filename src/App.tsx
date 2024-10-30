@@ -90,21 +90,31 @@ const NameForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name }),
-    });
-    const data = await res.json();
-    toast({
-      title: "Response",
-      description: data.message,
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
+    try {
+      const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+      const data = await res.json();
+      toast({
+        title: "Response",
+        description: data.message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "An error occurred",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (

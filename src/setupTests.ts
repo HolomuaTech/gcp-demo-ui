@@ -37,3 +37,12 @@ Object.defineProperty(window, 'innerHeight', {
   configurable: true,
   value: 768,
 });
+
+// Mock fetch if it doesn't exist in test environment
+global.fetch = global.fetch || jest.fn();
+
+// Mock toast container for Chakra UI
+jest.mock('@chakra-ui/react', () => ({
+  ...jest.requireActual('@chakra-ui/react'),
+  useToast: () => jest.fn(),
+}));
