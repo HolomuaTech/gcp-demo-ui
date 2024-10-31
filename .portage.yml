@@ -1,0 +1,7 @@
+imageTag: supermongol/hello-world-k8s-ui
+imagePublish:
+  enabled: false
+codeScan:
+  coverageFile: coverage/cobertura-coverage.xml
+deploy:
+  gatecheckConfigFilename: .gatecheck.yml

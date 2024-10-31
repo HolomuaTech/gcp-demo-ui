@@ -1,0 +1,64 @@
+name: Test, Build, and Scan Container
+
+# allow actions to update PRs and checks
+
+permissions:
+  pull-requests: write
+  checks: write
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-build-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm run test:coverage
+
+    - uses: 5monkeys/cobertura-action@v14
+      with:
+        path: coverage/cobertura-coverage.xml
+        # coverage limits are enforced by portage
+        minimum_coverage: 0
+        show_line: true
+        show_branch: true
+        show_class_names: true
+        show_missing: true
+
+    - name: Portage Build and Scan
+      uses: easy-up/portage-cd-actions/image-build-scan-publish/docker@main
+      with:
+        config_file: .portage.yml
+        
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: scan-artifacts
+        path: |
+          artifacts/*.txt
+          artifacts/*.yml
+          artifacts/*.json
+
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/
+        retention-days: 30
