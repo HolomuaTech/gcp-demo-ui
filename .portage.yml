@@ -1,4 +1,4 @@
-imageTag: supermongol/hello-world-k8s-ui
+imageTag: supermongol/doe-demo-ui
 imagePublish:
   enabled: false
 codeScan:

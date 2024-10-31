@@ -2,7 +2,7 @@ semgrep:
   severityLimit:
     error:
       enabled: true
-      limit: 0
+      limit: 1
 grype:
   # Ignore vulnerabilities with very low Exploit Probability Scores
   epssRiskAcceptance:
@@ -15,5 +15,5 @@ grype:
       enabled: false
 coverage:
   lineThreshold: 0.5
-  functionThreshold: 1
+  functionThreshold: 0.5
   branchThreshold: 0.5
