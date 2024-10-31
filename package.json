@@ -28,7 +28,7 @@
     "serve":  "node bin/serve.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "coverage": "react-scripts test --coverage --watchAll=false",
     "portage": "portage run all --config .portage.yml"
   },
   "eslintConfig": {
