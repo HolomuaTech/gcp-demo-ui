@@ -30,7 +30,7 @@ jobs:
       run: npm ci
 
     - name: Run tests
-      run: npm run test:coverage
+      run: npm run coverage
 
     - uses: 5monkeys/cobertura-action@v14
       with:
