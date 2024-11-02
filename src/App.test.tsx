@@ -1,21 +1,7 @@
 import React from "react"
 import { screen, fireEvent, waitForElementToBeRemoved, waitFor } from "@testing-library/react"
 import { render } from "./test-utils"
-import { App, ParticlesEngineProxy } from "./App"
-
-let originInitParticlesEngine = ParticlesEngineProxy.initParticlesEngine
-
-beforeAll(() => {
-  // Fake initParticlesEngine to prevent particle effects from ever rendering
-  ParticlesEngineProxy.initParticlesEngine = () => {
-    // Return a promise that never resolves
-    return new Promise(() => { })
-  }
-})
-
-afterAll(() => {
-  ParticlesEngineProxy.initParticlesEngine = originInitParticlesEngine;
-})
+import { App } from "./App"
 
 describe('CreditsModal', () => {
   test('opens modal when Credits button is clicked', async () => {
@@ -75,10 +61,10 @@ describe('NameForm', () => {
     
     const input = screen.getByLabelText(/what is your name/i)
     fireEvent.change(input, { target: { value: 'Test User' } })
-
+    
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
-
+    
     // Verify fetch was called
     expect(fetch).toHaveBeenCalledWith(
       'https://doe-demo-api-675849533921.us-west1.run.app/submit',
@@ -103,12 +89,11 @@ describe('NameForm', () => {
 
   test('handles empty input submission', async () => {
     render(<App />)
-
-    const submitButton = screen.getByText('Submit')
-
+    
     // Find and click submit button without entering name
+    const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
-
+    
     // Verify fetch was called with empty name
     expect(fetch).toHaveBeenCalledWith(
       'https://doe-demo-api-675849533921.us-west1.run.app/submit',
@@ -136,11 +121,11 @@ describe('NameForm', () => {
     // Find and fill the input
     const input = screen.getByLabelText(/what is your name/i)
     fireEvent.change(input, { target: { value: 'Test User' } })
-
+    
     // Find and click submit button
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
-
+    
     // Wait for and verify error toast was called
     await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({
