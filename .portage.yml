@@ -1,7 +1,15 @@
 imageTag: supermongol/doe-demo-ui
+codeScan:
+  enabled: true
+  coverageFile: coverage/cobertura-coverage.xml
+  #coverageFile: ""
+imageScan:
+  enabled: false
+imageBuild:
+  enabled: false
 imagePublish:
   enabled: false
-codeScan:
-  coverageFile: coverage/cobertura-coverage.xml
 deploy:
+  enabled: false
   gatecheckConfigFilename: .gatecheck.yml
+
