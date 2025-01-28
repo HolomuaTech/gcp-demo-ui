@@ -1,0 +1,215 @@
+include:
+  - project: 'devops-pipelines/pipeline-templates'
+    ref: main
+    file: '/templates/globals.yaml'
+  - project: 'devops-pipelines/pipeline-templates'
+    ref: main
+    file: '/jobs/build-image/podman-no-build.yaml'
+  - project: 'devops-pipelines/pipeline-templates'
+    ref: main
+    file: '/jobs/av-scan/clamav.yaml'
+  - project: 'devops-pipelines/pipeline-templates'
+    ref: main
+    file: '/jobs/sbom/syft.yaml'
+  - project: 'devops-pipelines/pipeline-templates'
+    ref: main
+    file: '/jobs/scan-image/grype.yaml'
+
+
+.build-image:
+  stage: build-image
+  image: artifactory.cloud.cms.gov/batcave-docker/ironbank/ironbank-pipelines/rootless-podman:0.2
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+      - .npm
+      - node_modules
+
+  artifacts:
+    paths:
+      - ${ARTIFACT_FOLDER}/build-image/
+
+  variables:
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
+    STORAGE_DRIVER: "vfs"
+    BUILDAH_FORMAT: "docker"
+
+  script:
+    - mkdir -p "${ARTIFACT_FOLDER}/build-image"
+    - echo "Building $ADO_IMAGE_PATH"
+    - echo $BC_ARTIFACTORY_AUTH_JSON  >>/tmp/auth.json
+    - echo "/tmp/auth.json" >>.dockerignore
+    - buildah bud --squash -t $ADO_IMAGE_PATH --authfile /tmp/auth.json -f ./Dockerfile .
+    - podman save -o ${ARTIFACT_FOLDER}/build-image/${CI_PROJECT_NAME}-${CI_COMMIT_SHORT_SHA}.tar $ADO_IMAGE_PATH
+    - echo "Successfully copied image to artifacts."
+    - echo "Pipeline Templates in now Deprecated. Please contact your batCAVE TA to upgrade to Pipeline Triggers https://code.batcave.internal.cms.gov/devops-pipelines/pipeline-triggers"
+
+.push_image:
+  image: artifactory.cloud.cms.gov/batcave-docker/devops-pipelines/pipeline-tools/rootless-podman-projectsigstore-cosign:1.13.1
+
+  variables:
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
+    STORAGE_DRIVER: "vfs"
+    BUILDAH_FORMAT: "docker"
+    COSIGN_EXPERIMENTAL: "true"
+  except:
+    - dev
+    - main
+
+  script:
+    - podman load -i ${ARTIFACT_FOLDER}/build-image/${CI_PROJECT_NAME}-${CI_COMMIT_SHORT_SHA}.tar
+    - echo $BC_ARTIFACTORY_AUTH_JSON  >>/tmp/auth.json
+    - echo "/tmp/auth.json" >>.dockerignore
+    - mkdir ~/.docker && cp /tmp/auth.json ~/.docker/config.json
+    - podman tag ${ADO_IMAGE_PATH} ${BC_IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+    - buildah push ${BC_IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+    - buildah push $ADO_IMAGE_PATH
+    - cosign version
+    - echo "Signing image using cosign with OIDC token"
+    - cosign sign --identity-token=$(cat /var/run/secrets/eks.amazonaws.com/serviceaccount/token) -f $ADO_IMAGE_PATH
+    - echo "Successfully pushed signed image $ADO_IMAGE_PATH"
+
+# For the dev branch, add the "latest" tag to the drupal base docker image
+build-latest-drupal-base-image:
+  allow_failure: false
+  extends: .build_image
+  stage: build-image
+  only:
+    - dev
+  variables:
+    IMAGE_NAME: "drupal-base-image"
+    IMAGE_TAG: "latest"
+    DOCKERFILE: "Dockerfile.drupal-base"
+
+push-latest-drupal-base-image:
+  allow_failure: false
+  extends: .push_image
+  stage: push-approved-image
+  only:
+    - dev
+  variables:
+    IMAGE_NAME: "drupal-base-image"
+    IMAGE_TAG: "latest"
+
+# Pipeline templates directory tree
+# ├── README.md
+# ├── docs
+# │   ├── README.md
+# │   └── for-TAs
+# │       ├── container-hardening-guide.md
+# │       └── testing-guide.md
+# ├── jobs
+# │   ├── av-scan
+# │   │   ├── base.yaml
+# │   │   └── clamav.yaml
+# │   ├── build-dependencies
+# │   │   ├── base.yaml
+# │   │   ├── dotnet.yaml
+# │   │   ├── go.yaml
+# │   │   ├── gradle.yaml
+# │   │   ├── maven.yaml
+# │   │   ├── npm.yaml
+# │   │   ├── php.yaml
+# │   │   ├── pip.yaml
+# │   │   └── yarn.yaml
+# │   ├── build-image
+# │   │   ├── base.yaml
+# │   │   ├── podman-no-build.yaml
+# │   │   └── podman.yaml
+# │   ├── deploy
+# │   │   ├── base.yaml
+# │   │   ├── deploy-dev.yaml
+# │   │   ├── deploy-impl.yaml
+# │   │   ├── deploy-prod.yaml
+# │   │   ├── deploy-test.yaml
+# │   │   └── kustomize.yaml
+# │   ├── gatecheck
+# │   │   ├── base.yaml
+# │   │   └── gatecheck.yaml
+# │   ├── lint
+# │   │   ├── base.yaml
+# │   │   ├── dotnet.yaml
+# │   │   ├── go.yaml
+# │   │   ├── npm.yaml
+# │   │   ├── php.yaml
+# │   │   ├── python.yaml
+# │   │   └── yarn.yaml
+# │   ├── pen-test
+# │   │   └── zap.yaml
+# │   ├── preprocess
+# │   │   ├── base.yaml
+# │   │   ├── load-scripts.yaml
+# │   │   └── pre-commit.yaml
+# │   ├── push-image
+# │   │   ├── base.yaml
+# │   │   ├── podman-ironbank.yaml
+# │   │   ├── podman.yaml
+# │   │   ├── push-approved-image.yaml
+# │   │   └── push-image.yaml
+# │   ├── rf-generate-hardened
+# │   │   └── base.yaml
+# │   ├── rf-generate-stub
+# │   │   └── base.yaml
+# │   ├── sast-scan
+# │   │   ├── base.yaml
+# │   │   └── semgrep.yaml
+# │   ├── sbom
+# │   │   ├── base.yaml
+# │   │   └── syft.yaml
+# │   ├── scan-image
+# │   │   ├── base.yaml
+# │   │   └── grype.yaml
+# │   ├── secrets-scan
+# │   │   ├── base.yaml
+# │   │   └── gitleaks.yaml
+# │   ├── submodule-update
+# │   │   └── submodule-update.yaml
+# │   ├── tag-image
+# │   │   └── retag-push-prod-image.yaml
+# │   ├── testing
+# │   │   ├── base.yaml
+# │   │   ├── cypress-e2e-hardened.yaml
+# │   │   └── cypress-e2e.yaml
+# │   └── unit-tests
+# │       ├── base.yaml
+# │       ├── dotnet.yaml
+# │       ├── go.yaml
+# │       ├── gradle.yaml
+# │       ├── maven.yaml
+# │       ├── npm.yaml
+# │       ├── php.yaml
+# │       ├── python.yaml
+# │       └── yarn.yaml
+# ├── renovate.json
+# ├── scripts
+# │   ├── av-scan
+# │   │   ├── freshclam.conf
+# │   │   └── run-clamav.sh
+# │   ├── deploy
+# │   │   └── update-image-values-helm.py
+# │   ├── gate-checks
+# │   │   └── dependency-check
+# │   │       └── dependency-check.js
+# │   ├── pen-test
+# │   │   └── owasp_baseline.conf
+# │   ├── rapidfort
+# │   │   ├── generate-hardened-with-profile.sh
+# │   │   ├── generate-hardened.sh
+# │   │   └── generate-stub.sh
+# │   └── semver-cli.sh
+# └── templates
+#     ├── container.yaml
+#     ├── dotnet.yaml
+#     ├── drupal.yaml
+#     ├── globals.yaml
+#     ├── go.yaml
+#     ├── gradle.yaml
+#     ├── image.yaml
+#     ├── ironbank-tool.yaml
+#     ├── maven.yaml
+#     ├── npm.yaml
+#     ├── php.yaml
+#     ├── pipeline-tool.yaml
+#     ├── python.yaml
+#     └── yarn.yaml
