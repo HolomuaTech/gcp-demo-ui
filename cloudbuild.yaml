@@ -1,4 +1,4 @@
-steps:
+teps:
   # Portage to build your image
   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
     env:
@@ -15,7 +15,7 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', 'doe-demo-ui',
+      'run', 'deploy', 'demo-ui',  # Changed from doe-demo-ui to demo-ui
       '--image', '${_IMAGE_NAME}',
       '--region', 'us-west1',
       '--platform', 'managed',
@@ -24,7 +24,7 @@ steps:
 
 # Define the variables used in the build
 substitutions:
-  _IMAGE_NAME: "us-west1-docker.pkg.dev/shared-resources-gcp/shared-container-registry/doe-demo-ui"
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/shared-resources-gcp/shared-container-registry/demo-ui"  # Changed image name too
 
 options:
   logging: CLOUD_LOGGING_ONLY
