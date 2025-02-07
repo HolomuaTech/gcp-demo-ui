@@ -19,9 +19,7 @@ steps:
       '--image', '${_IMAGE_NAME}',
       '--region', '${_REGION}',
       '--platform', 'managed',
-      '--no-user-output-enabled',
-      '--quiet',
-      '--impersonate-service-account=${_PROJECT_NUMBER}@cloudbuild.gserviceaccount.com',
+      '--service-account', 'demo-ui-sa@${PROJECT_ID}.iam.gserviceaccount.com',
       '--allow-unauthenticated'
     ]
 
@@ -29,7 +27,6 @@ steps:
 substitutions:
   _SERVICE_NAME: "demo-ui"
   _REGION: "us-west1"
-  _PROJECT_NUMBER: "1006539360959"
   _SHARED_PROJECT: "shared-resources-gcp"
   _REPOSITORY: "shared-container-registry"
   _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
