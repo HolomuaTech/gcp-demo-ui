@@ -1,5 +1,5 @@
 steps:
-  # Portage to build your image
+  # Build the image using Portage
   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
     env:
      - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
@@ -15,16 +15,24 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', 'demo-ui',  # Changed from doe-demo-ui to demo-ui
+      'run', 'deploy', '${_SERVICE_NAME}',
       '--image', '${_IMAGE_NAME}',
-      '--region', 'us-west1',
+      '--region', '${_REGION}',
       '--platform', 'managed',
+      '--no-user-output-enabled',
+      '--quiet',
+      '--impersonate-service-account=${_PROJECT_NUMBER}@cloudbuild.gserviceaccount.com',
       '--allow-unauthenticated'
     ]
 
 # Define the variables used in the build
 substitutions:
-  _IMAGE_NAME: "us-west1-docker.pkg.dev/shared-resources-gcp/shared-container-registry/demo-ui"  # Changed image name too
+  _SERVICE_NAME: "demo-ui"
+  _REGION: "us-west1"
+  _PROJECT_NUMBER: "1006539360959"
+  _SHARED_PROJECT: "shared-resources-gcp"
+  _REPOSITORY: "shared-container-registry"
+  _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY 
