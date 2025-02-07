@@ -1,4 +1,4 @@
-teps:
+steps:
   # Portage to build your image
   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
     env:
