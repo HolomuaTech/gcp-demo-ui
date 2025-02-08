@@ -19,7 +19,7 @@ steps:
       '--image', '${_IMAGE_NAME}',
       '--region', '${_REGION}',
       '--platform', 'managed',
-      '--service-account', 'demo-ui-sa@${PROJECT_ID}.iam.gserviceaccount.com',
+      '--service-account', '${_SERVICE_NAME}-sa@${PROJECT_ID}.iam.gserviceaccount.com',
       '--allow-unauthenticated'
     ]
 
