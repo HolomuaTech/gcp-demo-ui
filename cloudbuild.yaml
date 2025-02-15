@@ -1,48 +1,31 @@
 steps:
-  # Just echo a message
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'echo'
-    args: ['Hello, World!']
+  # Portage to build your image
+  - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
+    env:
+     - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
+    args: [
+      'run', 'all', '--tag', '${_IMAGE_NAME}'
+    ]
 
-  # Print out our substitutions to verify them
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'echo'
-    args: 
-      - 'Project: ${PROJECT_ID}'
-      - 'Image: ${_IMAGE_NAME}'
-      - 'Service: ${_SERVICE_NAME}'
+  # Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE_NAME}']
+
+  # Deploy the application to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', 'demo-ui-dev',
+      '--image', '${_IMAGE_NAME}',
+      '--region', 'us-west1',
+      '--project', 'holomua-demo',
+      '--platform', 'managed',
+      '--allow-unauthenticated'
+    ]
+
+# Define the variables used in the build
+substitutions:
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-demo/doe-demo-container-registry/doe-demo-ui"
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
-# steps:
-#   # Portage to build your image
-#   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
-#     env:
-#      - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
-#     args: [
-#       'run', 'all', '--tag', '${_IMAGE_NAME}'
-#     ]
-# 
-#   # Push the Docker image to Artifact Registry
-#   - name: 'gcr.io/cloud-builders/docker'
-#     args: ['push', '${_IMAGE_NAME}']
-# 
-#   # Deploy the application to Cloud Run
-#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#     entrypoint: 'gcloud'
-#     args: [
-#       'run', 'deploy', 'demo-ui-dev',
-#       '--image', '${_IMAGE_NAME}',
-#       '--region', 'us-west1',
-#       '--project', 'holomua-demo',
-#       '--platform', 'managed',
-#       '--allow-unauthenticated'
-#     ]
-# 
-# # Define the variables used in the build
-# substitutions:
-#   _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-demo/doe-demo-container-registry/doe-demo-ui"
-# 
-# options:
-#   logging: CLOUD_LOGGING_ONLY
