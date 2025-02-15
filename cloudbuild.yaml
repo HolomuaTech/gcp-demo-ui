@@ -1,35 +1,52 @@
 steps:
-  # Build the image using Portage
-  - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
-    env:
-     - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
-    args: [
-      'run', 'all', '--tag', '${_IMAGE_NAME}'
-    ]
+  # Just echo a message
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'echo'
+    args: ['Hello, World!']
 
-  # Push the Docker image to Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_IMAGE_NAME}']
-
-  # Deploy the application to Cloud Run
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: [
-      'run', 'deploy', '${_SERVICE_NAME}',
-      '--image', '${_IMAGE_NAME}',
-      '--region', '${_REGION}',
-      '--platform', 'managed',
-      '--service-account', '${_SERVICE_NAME}-sa@${PROJECT_ID}.iam.gserviceaccount.com',
-      '--allow-unauthenticated'
-    ]
-
-# Define the variables used in the build
-substitutions:
-  _SERVICE_NAME: "demo-ui"
-  _REGION: "us-west1"
-  _SHARED_PROJECT: "shared-resources-gcp"
-  _REPOSITORY: "shared-container-registry"
-  _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
+  # Print out our substitutions to verify them
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'echo'
+    args: 
+      - 'Project: ${PROJECT_ID}'
+      - 'Image: ${_IMAGE_NAME}'
+      - 'Service: ${_SERVICE_NAME}'
 
 options:
-  logging: CLOUD_LOGGING_ONLY 
+  logging: CLOUD_LOGGING_ONLY
+
+# steps:
+#   # Build the image using Portage
+#   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
+#     env:
+#      - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
+#     args: [
+#       'run', 'all', '--tag', '${_IMAGE_NAME}'
+#     ]
+# 
+#   # Push the Docker image to Artifact Registry
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['push', '${_IMAGE_NAME}']
+# 
+#   # Deploy the application to Cloud Run
+#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#     entrypoint: 'gcloud'
+#     args: [
+#       'run', 'deploy', '${_SERVICE_NAME}',
+#       '--image', '${_IMAGE_NAME}',
+#       '--region', '${_REGION}',
+#       '--platform', 'managed',
+#       '--service-account', '${_SERVICE_NAME}-sa@${PROJECT_ID}.iam.gserviceaccount.com',
+#       '--allow-unauthenticated'
+#     ]
+# 
+# # Define the variables used in the build
+# substitutions:
+#   _SERVICE_NAME: "demo-ui"
+#   _REGION: "us-west1"
+#   _SHARED_PROJECT: "shared-resources-gcp"
+#   _REPOSITORY: "shared-container-registry"
+#   _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
+# 
+# options:
+#   logging: CLOUD_LOGGING_ONLY 
