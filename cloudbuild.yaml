@@ -15,17 +15,17 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', 'doe-demo-ui',
+      'run', 'deploy', 'demo-ui-dev',
       '--image', '${_IMAGE_NAME}',
       '--region', 'us-west1',
+      '--project', 'holomua-demo',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
 
 # Define the variables used in the build
 substitutions:
-  _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-doe-demo/doe-demo-container-registry/doe-demo-ui"
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-demo/doe-demo-container-registry/doe-demo-ui"
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
