@@ -15,21 +15,20 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', '${_SERVICE_NAME}-${_ENVIRONMENT}',
+      'run', 'deploy', '${_SERVICE_NAME}',
       '--image', '${_IMAGE_NAME}',
       '--region', '${_REGION}',
+      '--project', '${_PROJECT_ID}',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
 
-# Define the variables used in the build
+# Define default variables (will be overridden by trigger substitutions)
 substitutions:
-  _REGION: "us-west1"
-  _SHARED_PROJECT: "shared-resources-gcp"
-  _REPOSITORY: "shared-container-registry"
-  _SERVICE_NAME: "demo-ui"
-  _ENVIRONMENT: "dev"
-  _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}-${_ENVIRONMENT}"
+  _REGION: "us-west1"  # Default region
+  _PROJECT_ID: "holomua-demo"  # Default project
+  _SERVICE_NAME: "demo-ui"  # Will be overridden by trigger (e.g., demo-ui-dev)
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/shared-resources-gcp/shared-container-registry/demo-ui"  # Will be overridden by trigger
 
 options:
   logging: CLOUD_LOGGING_ONLY
