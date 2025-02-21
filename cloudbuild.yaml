@@ -27,6 +27,7 @@ substitutions:
   _REGION: "us-west1"
   _SHARED_PROJECT: "shared-resources-gcp"
   _REPOSITORY: "shared-container-registry"
+  _SERVICE_NAME: "demo-ui"
   _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
 
 options:
