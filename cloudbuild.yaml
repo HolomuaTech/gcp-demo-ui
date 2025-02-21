@@ -1,5 +1,5 @@
 steps:
-  # Portage to build your image
+  # Build the image using Portage
   - name: 'ghcr.io/easy-up/portage:v0.0.1-rc.19'
     env:
      - "PORTAGE_IMAGE_PUBLISH_ENABLED=0"
@@ -15,17 +15,20 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', 'demo-ui-dev',
+      'run', 'deploy', '${_SERVICE_NAME}',
       '--image', '${_IMAGE_NAME}',
-      '--region', 'us-west1',
-      '--project', 'holomua-demo',
+      '--region', '${_REGION}',
+      '--project', '${_PROJECT_ID}',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
 
-# Define the variables used in the build
+# Define default variables (will be overridden by trigger substitutions)
 substitutions:
-  _IMAGE_NAME: "us-west1-docker.pkg.dev/holomua-demo/doe-demo-container-registry/doe-demo-ui"
+  _REGION: "us-west1"  # Default region
+  _PROJECT_ID: "holomua-demo"  # Default project
+  _SERVICE_NAME: "demo-ui"  # Will be overridden by trigger (e.g., demo-ui-dev)
+  _IMAGE_NAME: "us-west1-docker.pkg.dev/shared-resources-gcp/shared-container-registry/demo-ui"  # Will be overridden by trigger
 
 options:
   logging: CLOUD_LOGGING_ONLY
