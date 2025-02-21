@@ -15,7 +15,7 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
-      'run', 'deploy', '${_SERVICE_NAME}',
+      'run', 'deploy', '${_SERVICE_NAME}-${_ENVIRONMENT}',
       '--image', '${_IMAGE_NAME}',
       '--region', '${_REGION}',
       '--platform', 'managed',
@@ -28,7 +28,8 @@ substitutions:
   _SHARED_PROJECT: "shared-resources-gcp"
   _REPOSITORY: "shared-container-registry"
   _SERVICE_NAME: "demo-ui"
-  _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}"
+  _ENVIRONMENT: "dev"
+  _IMAGE_NAME: "${_REGION}-docker.pkg.dev/${_SHARED_PROJECT}/${_REPOSITORY}/${_SERVICE_NAME}-${_ENVIRONMENT}"
 
 options:
-  logging: CLOUD_LOGGING_ONLY 
+  logging: CLOUD_LOGGING_ONLY
