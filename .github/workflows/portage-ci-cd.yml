@@ -55,6 +55,7 @@ jobs:
           artifacts/*.txt
           artifacts/*.yml
           artifacts/*.json
+          artifacts/*.tar.gz
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4

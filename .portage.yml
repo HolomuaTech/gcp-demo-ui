@@ -1,8 +1,42 @@
+<<<<<<< Updated upstream
 # Base Configuration
 version: "1"
 imageTag: "ghcr.io/easy-up/gatecheck:latest"  # The full image tag for the target container image (e.g. my-org/my-app:latest)
 artifactDir: "artifacts"   # Directory for generated artifacts (e.g. ./artifacts) 
 gatecheckBundleFilename: "gatecheck-bundle.tar.gz"  # Filename for the gatecheck bundle (e.g. gatecheck-bundle.tar.gz)
+||||||| Stash base
+imageTag: supermongol/doe-demo-ui
+codeScan:
+  enabled: true
+  coverageFile: coverage/cobertura-coverage.xml
+  #coverageFile: ""
+imageScan:
+  enabled: false
+imageBuild:
+  enabled: false
+imagePublish:
+  enabled: false
+deploy:
+  enabled: false
+  gatecheckConfigFilename: .gatecheck.yml
+=======
+imageTag: supermongol/doe-demo-ui
+codeScan:
+  enabled: true
+  coverageFile: coverage/cobertura-coverage.xml
+imageScan:
+  enabled: true
+imageBuild:
+  enabled: true
+imagePublish:
+  enabled: false
+deploy:
+  enabled: false
+  gatecheckConfigFilename: .gatecheck.yml
+  successWebhooks:
+    - url: http://localhost:3030/
+      authorizationVar: MY_API_KEY
+>>>>>>> Stashed changes
 
 # Image Build Configuration
 imageBuild:
