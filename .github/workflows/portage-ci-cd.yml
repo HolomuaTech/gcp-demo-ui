@@ -46,8 +46,9 @@ jobs:
       uses: easy-up/portage-cd-actions/image-build-scan-publish/docker@main
       with:
         config_file: .portage.yml
+        image_publish_enabled: false
         deploy_enabled: false
-        
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
