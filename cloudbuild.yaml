@@ -1,6 +1,5 @@
 ---                                # yamllint: disable-line rule:document-start
-# Simple build → push → deploy pipeline
-# Trigger substitutions (set in Cloud Build UI or TF):
+# Trigger substitutions set in Cloud Build UI / TF:
 #   _SERVICE        demo-api        # or demo-ui
 #   _IMAGE_REPO     gcp-demo
 #   _REGION         us-west1
@@ -13,9 +12,6 @@ steps:
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
       - .
-
-images:
-  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
 
   # ── 2. Deploy to Cloud Run ──────────────────────────────────────
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
@@ -34,6 +30,10 @@ images:
       - managed
       - --allow-unauthenticated   # remove if the service is private
       - --quiet
+
+# Tags that Cloud Build should push to Artifact Registry
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
 
 options:
   substitutionOption: ALLOW_LOOSE
