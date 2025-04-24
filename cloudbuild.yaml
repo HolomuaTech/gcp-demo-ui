@@ -5,7 +5,7 @@
 #   _REGION         us-west1
 
 steps:
-  # ── 1. Build the image ──────────────────────────────────────────
+  # 1. Build the image
   - name: gcr.io/cloud-builders/docker
     env:
       - DOCKER_BUILDKIT=1
@@ -15,7 +15,13 @@ steps:
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
       - .
 
-  # ── 2. Deploy to Cloud Run ──────────────────────────────────────
+  # 2. Push the image
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
+
+  # 3. Reload cloud run
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
     args:
