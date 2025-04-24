@@ -38,6 +38,5 @@ images:
 options:
   substitutionOption: ALLOW_LOOSE
   logStreamingOption: STREAM_ON
-  machineType: E2_SMALL
 
 timeout: "900s"
