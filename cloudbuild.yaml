@@ -11,6 +11,7 @@ steps:
       - DOCKER_BUILDKIT=1
     args:
       - build
+      - --build-arg
       - REACT_APP_API_BASE=${_API_BASE}
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
