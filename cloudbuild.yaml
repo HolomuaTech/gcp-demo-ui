@@ -11,6 +11,7 @@ steps:
       - DOCKER_BUILDKIT=1
     args:
       - build
+      - REACT_APP_API_BASE=${_API_BASE}
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_IMAGE_REPO}/${_SERVICE}:${SHORT_SHA}
       - .
@@ -46,5 +47,11 @@ images:
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _API_BASE: https://demo-api-dev.holomuatech.com
+  _REGION: us-west1
+  _IMAGE_REPO: gcp-demo
+  _SERVICE: demo-ui
 
 timeout: "900s"
