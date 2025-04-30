@@ -1,31 +1,32 @@
 import * as React from "react"
-import { useState } from "react";
+import { ReactElement, useContext, useEffect, useMemo, useState } from "react"
 import {
-  ChakraProvider,
   Box,
-  Text,
-  VStack,
-  Grid,
-  theme,
-  Heading,
-  Flex,
-  Spacer,
   Button,
+  ChakraProvider,
+  Flex,
+  Grid,
+  Heading,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
-  Input,
-  FormControl,
-  FormLabel,
-  useToast
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spacer,
+  Spinner,
+  Text,
+  theme,
+  useDisclosure
 } from "@chakra-ui/react"
 import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Logo } from "./Logo"
+import Particles, { initParticlesEngine } from "@tsparticles/react"
+import { loadFull } from "tsparticles"
+import { useParticlesOptions } from './particlesOptions'
+import { NameForm } from './NameForm'
+import { ApiStatusContext, ApiStatusProvider } from './apiStatusContext'
 
 const CreditsModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,10 +38,10 @@ const CreditsModal = () => {
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
+        <ModalOverlay/>
         <ModalContent>
           <ModalHeader>Credits</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton/>
           <ModalBody>
             <Text>Aaron Yee</Text>
             <Text>Derrin Chong</Text>
@@ -57,86 +58,66 @@ const CreditsModal = () => {
   );
 };
 
-const Navbar = () => (
-  <Flex as="nav" bg="teal.500" color="white" padding="1.5rem" align="center">
+const Navbar = () => {
+  const { apiStatus } = useContext(ApiStatusContext);
+  return (<Flex as="nav" bg="teal.500" color="white" padding="1.5rem" align="center">
     <Box>
       <Heading size="md">Demo App</Heading>
     </Box>
-    <Logo h="5vmin" pointerEvents="none" ml={2} />
-    <Spacer />
+    <Logo h="5vmin" pointerEvents="none" ml={2}/>
+    <Spacer/>
+    { apiStatus.loading && <Spinner/> }
+    <Spacer/>
     <Box>
-      <CreditsModal />
+      <CreditsModal/>
     </Box>
-  </Flex>
-);
+  </Flex>);
+}
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Navbar />
-    <Box textAlign="center" fontSize="xl" >
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={4} mt={-20}>
-          <NameForm />
-        </VStack>
-      </Grid>
-    </Box>
+export const ParticlesEngineProxy = {
+  initParticlesEngine
+}
+
+const Background = ({ children }: { children: ReactElement | ReactElement[] }) => {
+  const [init, setInit] = useState(false);
+
+  useEffect(() => {
+    ParticlesEngineProxy.initParticlesEngine(async (engine) => {
+      await loadFull(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
+
+  const particlesOptions = useParticlesOptions();
+
+  const cssOptions = useMemo<Partial<CSSStyleDeclaration>>(() => ({
+    position: 'absolute',
+  }), [])
+
+  return (<Box display={"flex"} flexDir={"column"} flexGrow={1} position={"relative"}>
+    {init && <Particles
+        options={{ ...particlesOptions, style: cssOptions }}
+    />}
+
+    {children}
+  </Box>)
+}
+
+export const App = () => {
+  return <ChakraProvider theme={theme}>
+    <ApiStatusProvider>
+      <Box display={"flex"} flexDir={"column"} height={"100vh"}>
+        <Navbar/>
+        <Background>
+          <Box textAlign="center" fontSize="xl" flexGrow={1}>
+            <Grid p={3} height={"100%"}>
+              <ColorModeSwitcher justifySelf="flex-end" gridRow={1} gridColumn={1}/>
+              <NameForm/>
+            </Grid>
+          </Box>
+        </Background>
+      </Box>
+    </ApiStatusProvider>
   </ChakraProvider>
-)
-
-const NameForm = () => {
-  const [name, setName] = useState("");
-  const toast = useToast();
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name }),
-      });
-      const data = await res.json();
-      toast({
-        title: "Response",
-        description: data.message,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
-
-  return (
-    <Box mt={-20}>
-      <form onSubmit={handleSubmit}>
-        <FormControl id="name">
-          <FormLabel>Hello, what is your name?</FormLabel>
-          <Flex align="center">
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              mr={2}
-            />
-            <Button colorScheme="teal" type="submit">
-              Submit
-            </Button>
-          </Flex>
-        </FormControl>
-      </form>
-    </Box>
-  );
-};
-
-
+}
