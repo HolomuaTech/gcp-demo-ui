@@ -1,0 +1,20 @@
+semgrep:
+  severityLimit:
+    error:
+      enabled: true
+      # DEMO ONLY set 0 to trigger threshold error, 10 to pass
+      limit: 10
+grype:
+  # Ignore vulnerabilities with very low Exploit Probability Scores
+  epssRiskAcceptance:
+    enabled: true
+    score: 0.001
+  severityLimit:
+    critical:
+      enabled: false
+    high:
+      enabled: false
+coverage:
+  lineThreshold: 0.5
+  functionThreshold: 0.5
+  branchThreshold: 0.5
