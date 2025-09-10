@@ -1,5 +1,5 @@
 steps:
-  # create the artifacts directory for portage and allow it to write to the directory 
+  # create the artifacts directory for portage and allow it to write to the directory
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: ['-c', 'mkdir -p /workspace/artifacts && chmod 777 /workspace/artifacts | ls -la']
@@ -60,7 +60,7 @@ images:
 
 availableSecrets:
   secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/deploy-ui-webhook-auth-header/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/gcp-demo-deploy-ui-webhook-auth-header/versions/latest
       env: 'DEPLOY_UI_WEBHOOK_AUTH_HEADER_SECRET'
 
 options:
