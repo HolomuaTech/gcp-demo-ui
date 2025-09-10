@@ -51,12 +51,16 @@ steps:
     secretEnv:
       ['DEPLOY_UI_WEBHOOK_AUTH_HEADER_SECRET']
 
+  # Tag the built image with the correct registry path
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', '${_SERVICE}:latest', 'us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/${_SERVICE}:latest']
+
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-west1-docker.pkg.dev/shared-resources-gcp/${_IMAGE_REPO}/${_SERVICE}:latest']
+    args: ['push', 'us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/${_SERVICE}:latest']
 
 images:
-  - 'us-west1-docker.pkg.dev/shared-resources-gcp/${_IMAGE_REPO}/${_SERVICE}'
+  - 'us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/${_SERVICE}'
 
 availableSecrets:
   secretManager:
