@@ -44,17 +44,13 @@ jobs:
         show_class_names: true
         show_missing: true
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Portage Build and Scan
       uses: easy-up/portage-cd-actions/image-build-scan-publish/docker@main
       with:
         config_file: .portage-github.yml
+        container_registry: ghcr.io
+        registry_user: ${{ github.actor }}
+        registry_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
