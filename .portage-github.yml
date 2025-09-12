@@ -38,7 +38,7 @@ codeScan:
 # Image Publish Configuration
 imagePublish:
   enabled: true
-  bundleTag: "ghcr.io/HolomuaTech/gcp-demo-ui/bundle:latest"
+  bundleTag: "ghcr.io/holomuatech/gcp-demo-ui/bundle:latest"
 
 # Deploy Configuration
 deploy:
