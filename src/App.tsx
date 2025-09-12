@@ -93,9 +93,6 @@ const NameForm = () => {
     try {
       const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ name }),
       });
       const data = await res.json();
