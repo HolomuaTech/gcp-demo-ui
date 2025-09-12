@@ -1,6 +1,6 @@
 # Base Configuration
 version: "1"
-imageTag: "ghcr.io/HolomuaTech/gcp-demo-ui:latest"
+imageTag: "ghcr.io/holomuatech/gcp-demo-ui:latest"
 artifactDir: "artifacts"
 gatecheckBundleFilename: "gatecheck-bundle.tar.gz"
 
