@@ -54,11 +54,7 @@ jobs:
     - name: Portage Build and Scan
       uses: easy-up/portage-cd-actions/image-build-scan-publish/docker@main
       with:
-        config_file: .portage.yml
-        tag: ghcr.io/${{ github.repository_owner }}/gcp-demo-ui:latest
-        bundle_publish_tag: ghcr.io/${{ github.repository_owner }}/gcp-demo-ui/bundle:latest
-        image_publish_enabled: true
-        deploy_enabled: false
+        config_file: .portage-github.yml
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
