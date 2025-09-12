@@ -91,8 +91,11 @@ const NameForm = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const res = await fetch("https://doe-demo-api-675849533921.us-west1.run.app/submit", {
+      const res = await fetch("https://demo-api-dev.holomuatech.com/submit", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ name }),
       });
       const data = await res.json();
