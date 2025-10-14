@@ -43,7 +43,7 @@ include:
     - buildah bud --squash -t $ADO_IMAGE_PATH --authfile /tmp/auth.json -f ./Dockerfile .
     - podman save -o ${ARTIFACT_FOLDER}/build-image/${CI_PROJECT_NAME}-${CI_COMMIT_SHORT_SHA}.tar $ADO_IMAGE_PATH
     - echo "Successfully copied image to artifacts."
-    - echo "Pipeline Templates in now Deprecated. Please contact your batCAVE TA to upgrade to Pipeline Triggers https://code.batcave.internal.cms.gov/devops-pipelines/pipeline-triggers"
+    - echo "Pipeline Templates in now Deprecated."
 
 .push_image:
   image: artifactory.cloud.cms.gov/batcave-docker/devops-pipelines/pipeline-tools/rootless-podman-projectsigstore-cosign:1.13.1
