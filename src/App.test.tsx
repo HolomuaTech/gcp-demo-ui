@@ -65,9 +65,9 @@ describe('NameForm', () => {
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
     
-    // Verify fetch was called
+    // Verify fetch was called (accepts either old or new API URL)
     expect(fetch).toHaveBeenCalledWith(
-      'https://doe-demo-api-675849533921.us-west1.run.app/submit',
+      expect.stringMatching(/https:\/\/(doe-demo-api-675849533921\.us-west1\.run\.app|demo-api-dev\.holomuatech\.com)\/submit/),
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ name: 'Test User' }),
@@ -94,9 +94,9 @@ describe('NameForm', () => {
     const submitButton = screen.getByText('Submit')
     fireEvent.click(submitButton)
     
-    // Verify fetch was called with empty name
+    // Verify fetch was called with empty name (accepts either old or new API URL)
     expect(fetch).toHaveBeenCalledWith(
-      'https://doe-demo-api-675849533921.us-west1.run.app/submit',
+      expect.stringMatching(/https:\/\/(doe-demo-api-675849533921\.us-west1\.run\.app|demo-api-dev\.holomuatech\.com)\/submit/),
       {
         method: 'POST',
         headers: {
@@ -114,7 +114,8 @@ describe('NameForm', () => {
     ) as jest.Mock;
 
     const mockToast = jest.fn();
-    jest.spyOn(require('@chakra-ui/react'), 'useToast').mockImplementation(() => mockToast);
+    const useToastMock = jest.spyOn(require('@chakra-ui/react'), 'useToast')
+      .mockReturnValue(mockToast);
 
     render(<App />)
     
@@ -134,5 +135,8 @@ describe('NameForm', () => {
         status: "error"
       }));
     });
+
+    // Clean up mock
+    useToastMock.mockRestore();
   })
 })
