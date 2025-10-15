@@ -44,5 +44,7 @@ imagePublish:
 deploy:
   enabled: false
   gatecheckConfigFilename: ".gatecheck.yml"
-  submit: false
-  successWebhooks: []
+  submit: true
+  successWebhooks: 
+   - url: "https://belay-api.holomuatech.com/Build/SubmitArtifacts"
+     authorizationVar: "DEPLOY_UI_WEBHOOK_AUTH_HEADER"
