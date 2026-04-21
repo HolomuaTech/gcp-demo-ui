@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import { useState } from "react";
 import {
   ChakraProvider,
@@ -22,10 +22,10 @@ import {
   Input,
   FormControl,
   FormLabel,
-  useToast
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+  useToast,
+} from "@chakra-ui/react";
+import { ColorModeSwitcher } from "./ColorModeSwitcher";
+import { Logo } from "./Logo";
 
 const CreditsModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,7 +43,6 @@ const CreditsModal = () => {
           <ModalCloseButton />
           <ModalBody>
             <Text>Aaron Yee</Text>
-            <Text>Derrin Chong</Text>
             <Text>Paul Wheeler</Text>
           </ModalBody>
           <ModalFooter>
@@ -73,7 +72,7 @@ const Navbar = () => (
 export const App = () => (
   <ChakraProvider theme={theme}>
     <Navbar />
-    <Box textAlign="center" fontSize="xl" >
+    <Box textAlign="center" fontSize="xl">
       <Grid minH="100vh" p={3}>
         <ColorModeSwitcher justifySelf="flex-end" />
         <VStack spacing={4} mt={-20}>
@@ -82,7 +81,7 @@ export const App = () => (
       </Grid>
     </Box>
   </ChakraProvider>
-)
+);
 
 const NameForm = () => {
   const [name, setName] = useState("");
@@ -109,7 +108,8 @@ const NameForm = () => {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred",
+        description:
+          error instanceof Error ? error.message : "An error occurred",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -138,5 +138,3 @@ const NameForm = () => {
     </Box>
   );
 };
-
-
