@@ -43,7 +43,6 @@ const CreditsModal = () => {
           <ModalCloseButton />
           <ModalBody>
             <Text>Aaron Yee</Text>
-            <Text>Paul Wheeler</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" mr={3} onClick={onClose}>
