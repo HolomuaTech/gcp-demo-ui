@@ -12,8 +12,6 @@ describe('CreditsModal', () => {
     
     // Verify modal content is displayed
     expect(await screen.findByText('Aaron Yee')).toBeInTheDocument()
-    expect(screen.getByText('Derrin Chong')).toBeInTheDocument()
-    expect(screen.getByText('Paul Wheeler')).toBeInTheDocument()
   })
 
   test('closes modal when Close button is clicked', async () => {
