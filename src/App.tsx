@@ -58,7 +58,7 @@ const CreditsModal = () => {
 const Navbar = () => (
   <Flex as="nav" bg="teal.500" color="white" padding="1.5rem" align="center">
     <Box>
-      <Heading size="md">Demo App</Heading>
+      <Heading size="md">Belay Demo App</Heading>
     </Box>
     <Logo h="5vmin" pointerEvents="none" ml={2} />
     <Spacer />
