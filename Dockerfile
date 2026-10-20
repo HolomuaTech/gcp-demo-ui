@@ -9,7 +9,7 @@ COPY tsconfig.json .
 RUN npm run build
 
 # Stage 2 - the production environment
-FROM nginx:1.17.9-alpine
+FROM nginx:1.30-alpine
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
 # Add the custom Nginx config to make it listen on port 8080
