@@ -1,6 +1,6 @@
 # Base Configuration
 version: "1"
-imageTag: "us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/gcp-demo-ui:latest"
+imageTag: "us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/gcp-demo-ui-uat:latest"
 artifactDir: "artifacts"
 gatecheckBundleFilename: "gatecheck-bundle.tar.gz"
 
