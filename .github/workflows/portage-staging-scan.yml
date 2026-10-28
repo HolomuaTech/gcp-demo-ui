@@ -1,0 +1,48 @@
+name: Staging Scan (Belay POA&M promotion)
+
+# Scan-only pipeline for the staging branch. Portage builds the image, runs the code and image scans,
+# and submits the results to Belay under the staging branch. Nothing is pushed and nothing is deployed
+# (Belay has no deployment configured for staging).
+# Findings on staging are triaged with POA&Ms in Belay. With a staging -> main promotion path, the approval is
+# copied to main when the finding reaches main's pipeline (copy on arrival), so it still passes after the merge.
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - 'staging'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Same .portage.yml as the main Cloud Build pipeline, with these overrides:
+    # - publish off: the image stays on the runner, so no registry credentials are needed
+    # - policy from Belay for the staging branch (falls back to the global thresholds)
+    # - report mode (from .portage.yml): failing builds are still submitted, so they can be triaged in Belay
+    - name: Portage Build, Scan and Submit to Belay
+      uses: easy-up/portage-cd-actions/image-build-scan-publish/docker@belay_main
+      env:
+        DEPLOY_UI_WEBHOOK_AUTH_HEADER: ${{ secrets.DEPLOY_UI_WEBHOOK_AUTH_HEADER }}
+      with:
+        config_file: .portage.yml
+        image_publish_enabled: false
+        deploy_policy_url: https://belay-api.holomuatech.com/Policy/HolomuaTech/gcp-demo-ui/gatecheck?branch=staging
+        build_group_id: github:${{ github.repository }}:${{ github.run_id }}
+        image_name: us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/gcp-demo-ui
+        build_image_names: us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/gcp-demo-ui
+        tag: us-west1-docker.pkg.dev/holomua-demo/gcp-demo-registry/gcp-demo-ui:staging-${{ github.sha }}
+
+    - name: Upload Artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: scan-artifacts
+        path: artifacts/
