@@ -3,8 +3,8 @@ name: Staging Scan (Belay POA&M promotion)
 # Scan-only pipeline for the staging branch. Portage builds the image, runs the code and image scans,
 # and submits the results to Belay under the staging branch. Nothing is pushed and nothing is deployed
 # (Belay has no deployment configured for staging).
-# Findings on staging are triaged with POA&Ms in Belay. With a staging -> main promotion path, approving
-# a POA&M on staging also approves it on main, so main's Cloud Build pipeline passes after the merge.
+# Findings on staging are triaged with POA&Ms in Belay. With a staging -> main promotion path, the approval is
+# copied to main when the finding reaches main's pipeline (copy on arrival), so it still passes after the merge.
 
 permissions:
   contents: read
