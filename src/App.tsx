@@ -120,7 +120,7 @@ const NameForm = () => {
     <Box mt={-20}>
       <form onSubmit={handleSubmit}>
         <FormControl id="name">
-          <FormLabel>Hello, what is your name?</FormLabel>
+          <FormLabel>Hi, what is your name?</FormLabel>
           <Flex align="center">
             <Input
               type="text"
